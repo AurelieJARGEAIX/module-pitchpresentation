@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prépa Entretien Armée — Module Parcooroo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0c0d0f;
+    --card: #111317;
+    --surface: #181a1f;
+    --surface2: #0e0f12;
+    --border: #222428;
+    --border2: #2e3036;
+    --text: #ecedf2;
+    --text2: #c4c8d4;
+    --muted: #7a7f91;
+    --dim: #3a3d4a;
+    --accent: #c9a84c;
+    --accent2: #e8c97a;
+    --accent-dark: #7a5f1a;
+    --green: #4ade80;
+    --yellow: #fbbf24;
+    --red: #f87171;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 20px 60px;
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(201,168,76,0.03) 39px,
+      rgba(201,168,76,0.03) 40px
+    );
+  }
+
+  #app { width: 100%; max-width: 700px; }
+
+  .card {
+    background: var(--card);
+    border-radius: 4px;
+    padding: 44px 48px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--accent);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: fadeIn 0.35s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Header badge ── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--accent-dark);
+    border-radius: 2px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 24px;
+  }
+
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 38px; color: var(--text); letter-spacing: 2px; line-height: 1.1; }
+  h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--text); letter-spacing: 1.5px; }
+  h3 { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--accent); letter-spacing: 1px; }
+
+  /* ── Progress ── */
+  .progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; font-family: 'DM Mono', monospace; letter-spacing: 0.5px; }
+  .progress-track { height: 3px; background: var(--border); margin-bottom: 32px; }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+  /* ── Dots ── */
+  .dots { display: flex; gap: 6px; justify-content: center; margin-bottom: 36px; }
+  .dot { height: 3px; border-radius: 0; transition: all 0.3s ease; background: var(--border); width: 24px; }
+  .dot.past { background: var(--accent-dark); }
+  .dot.active { background: var(--accent); width: 40px; }
+
+  /* ── Step ── */
+  .step-meta { font-size: 11px; color: var(--accent); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .step-title { margin-bottom: 4px; }
+  .step-subtitle { color: var(--muted); font-size: 13px; font-family: 'DM Mono', monospace; margin-bottom: 24px; }
+  .step-instruction { color: var(--text2); font-size: 15px; line-height: 1.8; margin-bottom: 16px; }
+
+  /* ── Example ── */
+  .example {
+    padding: 16px 20px;
+    background: var(--surface2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 20px;
+  }
+  .example-label { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .example-text { color: var(--muted); font-size: 13px; line-height: 1.7; font-style: italic; }
+
+  /* ── Checklist ── */
+  .checklist { margin-bottom: 20px; }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item:hover { background: var(--surface); }
+  .check-box {
+    width: 16px; height: 16px;
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .check-box.checked { background: var(--accent); border-color: var(--accent); }
+  .check-box.checked::after { content: "✓"; font-size: 10px; color: #111; font-weight: bold; }
+
+  /* ── Textarea ── */
+  textarea {
+    width: 100%;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.8;
+    font-family: 'Lora', serif;
+    resize: none;
+    transition: border-color 0.2s;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  textarea.filled { border-color: var(--accent); }
+  textarea::placeholder { color: var(--dim); font-style: italic; }
+  .char-count { text-align: right; font-size: 11px; color: var(--dim); font-family: 'DM Mono', monospace; margin-bottom: 20px; }
+
+  /* ── Tip ── */
+  .tip {
+    padding: 12px 16px;
+    background: rgba(201,168,76,0.06);
+    border: 1px solid var(--accent-dark);
+    border-radius: 2px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+  .tip strong { color: var(--accent); }
+
+  /* ── Buttons ── */
+  .btn-row { display: flex; gap: 12px; }
+  .btn { padding: 12px 20px; border-radius: 2px; font-size: 13px; font-family: 'DM Mono', monospace; cursor: pointer; border: none; transition: all 0.2s; letter-spacing: 0.5px; }
+  .btn-back { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-back:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-next { flex: 1; background: var(--accent); color: #0c0d0f; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+  .btn-next:hover { background: var(--accent2); }
+  .btn-next:disabled { background: var(--border); color: var(--dim); cursor: not-allowed; }
+  .btn-primary { width: 100%; padding: 16px; background: var(--accent); color: #0c0d0f; font-size: 15px; font-family: 'DM Mono', monospace; border-radius: 2px; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; transition: background 0.2s; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary { flex: 1; padding: 12px; background: var(--surface); color: var(--muted); border: 1px solid var(--border); border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 13px; cursor: pointer; letter-spacing: 0.5px; }
+  .btn-secondary:hover { border-color: var(--accent); }
+  .btn-ai { width: 100%; padding: 14px 20px; border-radius: 2px; border: 1px solid var(--accent-dark); background: rgba(201,168,76,0.08); color: var(--accent); font-size: 13px; font-family: 'DM Mono', monospace; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 24px; }
+  .btn-ai:hover { background: rgba(201,168,76,0.15); }
+  .btn-ai:disabled { opacity: 0.5; cursor: not-allowed; }
+  .spinner { display: inline-block; animation: spin 1s linear infinite; }
+
+  /* ── Intro ── */
+  .intro-icon { font-size: 48px; margin-bottom: 16px; }
+  .intro-divider { height: 1px; background: var(--border); margin: 28px 0; }
+  .intro-desc { color: var(--muted); font-size: 15px; line-height: 1.8; margin-bottom: 32px; }
+  .intro-desc em { color: var(--text2); font-style: normal; }
+
+  .module-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 36px; border: 1px solid var(--border); border-radius: 2px; overflow: hidden; }
+  .module-item { display: flex; align-items: center; gap: 16px; padding: 14px 18px; background: var(--card); border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  .module-item:last-child { border-bottom: none; }
+  .module-num { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); min-width: 24px; }
+  .module-title { color: var(--text); font-size: 14px; }
+  .module-sub { color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+  /* ── Preview ── */
+  .preview-section { margin-bottom: 24px; }
+  .preview-section-title { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .preview-text { color: var(--text2); line-height: 1.8; font-size: 14px; }
+
+  .full-text-box { margin-top: 28px; padding: 24px; background: var(--surface2); border: 1px solid var(--border2); border-left: 3px solid var(--accent); }
+  .full-text-label { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .full-text-content { color: var(--text); line-height: 2; font-size: 14px; font-family: 'Lora', serif; }
+
+  /* ── AI Feedback ── */
+  .ai-feedback { margin-top: 16px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); animation: fadeIn 0.4s ease; }
+  .ai-label { font-size: 10px; color: var(--accent); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; }
+  .ai-text { color: var(--text2); line-height: 1.8; font-size: 14px; white-space: pre-wrap; }
+
+  /* ── Result header ── */
+  .result-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; padding-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .result-emoji { font-size: 36px; }
+  .result-title { font-size: 28px; margin-bottom: 4px; }
+  .result-sub { color: var(--muted); font-family: 'DM Mono', monospace; font-size: 12px; }
+
+  /* ── Triple textarea (qualités/défauts) ── */
+  .triple { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+  .triple textarea { margin-bottom: 0; }
+
+  @media (max-width: 600px) {
+    .card { padding: 28px 20px; }
+    body { padding: 20px 12px 40px; }
+    h1 { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ── Data ─────────────────────────────────────────────────────────────────────
+
+const STEPS = [
+  {
+    id: 1,
+    num: "01",
+    emoji: "🪖",
+    title: "Connaissance du métier",
+    subtitle: "Montrez que vous connaissez le poste visé",
+    instruction: "Le recruteur vous demandera : « Quelles sont les grandes missions d'un soldat ? En quoi consiste le poste de… dans l'armée ? » Préparez deux versions de réponse.",
+    fields: [
+      { key: "metier_a", label: "Plan A — Les grandes missions du poste visé", placeholder: "Ex : Le combattant de la logistique a pour mission principale d'assurer le soutien des unités en opération. Il gère les flux de matériels, effectue des convois, et...", rows: 5, max: 500 },
+      { key: "metier_b", label: "Plan B — Les activités majeures au quotidien", placeholder: "Ex : Au quotidien, ce soldat est amené à conduire des engins de manutention, gérer les stocks, préparer les expéditions, travailler en équipe sous contrainte...", rows: 5, max: 500 },
+    ],
+    tip: "<strong>Conseil :</strong> Lisez attentivement les fiches métiers correspondant à votre projet. Repérez les idées essentielles pour extraire les grandes missions et activités.",
+    example: null
+  },
+  {
+    id: 2,
+    num: "02",
+    emoji: "⚖️",
+    title: "Qualités & Défauts",
+    subtitle: "Soyez honnête et argumenté",
+    instruction: "Listez trois qualités et trois défauts en les inscrivant dans une phrase complète. Un défaut bien argumenté n'est plus vraiment un défaut.",
+    fields: [
+      { key: "qualite1", label: "Qualité 1", placeholder: "Ex : Je suis sociable, d'ailleurs lorsque j'intègre une équipe je prends facilement contact avec les autres.", rows: 2, max: 200 },
+      { key: "qualite2", label: "Qualité 2", placeholder: "Ex : Je suis rigoureux : dans mon dernier poste, je n'ai jamais eu d'erreur sur mes préparations de commandes.", rows: 2, max: 200 },
+      { key: "qualite3", label: "Qualité 3", placeholder: "Ex : Je suis résistant physiquement et mentalement, j'aime les défis et les environnements exigeants.", rows: 2, max: 200 },
+      { key: "defaut1",  label: "Défaut 1 (argumenté)", placeholder: "Ex : Il m'arrive d'être bavard, mais c'est une manière pour moi d'amener les autres à parler et de créer du lien dans l'équipe.", rows: 2, max: 200 },
+      { key: "defaut2",  label: "Défaut 2 (argumenté)", placeholder: "Ex : Je peux être perfectionniste, ce qui me pousse parfois à prendre plus de temps, mais cela garantit un travail sans erreur.", rows: 2, max: 200 },
+      { key: "defaut3",  label: "Défaut 3 (argumenté)", placeholder: "Ex : J'ai du mal à déléguer, mais je travaille sur ce point en apprenant à faire confiance à mon équipe.", rows: 2, max: 200 },
+    ],
+    tip: "<strong>Conseil :</strong> Pour les défauts, ne choisissez pas quelque chose de rédhibitoire pour le poste. Montrez toujours que vous en êtes conscient et que vous y travaillez.",
+    example: { label: "Exemples du dossier", text: "Qualité : « Je suis sociable, d'ailleurs, lorsque j'intègre une équipe de travail j'ai des facilités à parler avec les autres. »\n\nDéfaut : « Il m'arrive d'être bavard, mais c'est une manière pour moi d'amener les autres à parler d'eux. »" }
+  },
+  {
+    id: 3,
+    num: "03",
+    emoji: "🔥",
+    title: "Vos motivations",
+    subtitle: "Pourquoi vouloir CE poste ?",
+    instruction: "Le recruteur voudra comprendre pourquoi vous, pourquoi l'armée, pourquoi l'armée de Terre, et pourquoi ce poste précisément. Trois niveaux de motivation à préparer.",
+    fields: [
+      { key: "motiv_poste",  label: "Pourquoi ce poste ?",             placeholder: "Ex : Ce poste me correspond parce que j'ai déjà des compétences en logistique et que je veux les mettre au service d'une mission plus grande que moi…", rows: 4, max: 400 },
+      { key: "motiv_armee",  label: "Pourquoi intégrer l'armée ?",     placeholder: "Ex : J'ai toujours eu le sens du devoir et de la rigueur. L'armée représente pour moi des valeurs de fraternité, d'engagement et de dépassement de soi…", rows: 4, max: 400 },
+      { key: "motiv_terre",  label: "Pourquoi l'armée de Terre spécifiquement ?", placeholder: "Ex : L'armée de Terre correspond à mon envie de terrain, de contact humain, de missions concrètes au sol. Je veux être au cœur de l'action…", rows: 4, max: 400 },
+    ],
+    tip: "<strong>Conseil :</strong> Soyez précis et personnel. Évitez les formules vagues comme « j'aime les défis ». Ancrez vos motivations dans des expériences ou des valeurs concrètes.",
+    example: null
+  },
+  {
+    id: 4,
+    num: "04",
+    emoji: "🎖️",
+    title: "Présentez-vous",
+    subtitle: "Votre histoire personnelle — vivante !",
+    instruction: "Maintenant que vous avez préparé le métier, vos qualités et vos motivations, rassemblez tout dans votre présentation. Racontez votre histoire, pas un simple récit de CV.",
+    fields: [
+      { key: "identite",       label: "Prénom, Nom & Âge",              placeholder: "Ex : Je suis Marcus DUFOUR, j'ai 21 ans…",             rows: 2,  max: 150 },
+      { key: "objectif",       label: "Votre objectif professionnel",    placeholder: "Ex : Mon projet est de devenir combattant de la logistique…", rows: 2, max: 200 },
+      { key: "diplomes",       label: "Vos diplômes et certifications",  placeholder: "Ex : Je possède les CACES 1, 3, 5 et un Bac Pro Logistique…", rows: 2, max: 250 },
+      { key: "formation",      label: "Formation Préparation aux carrières militaires UFCV", placeholder: "Ex : J'ai effectué une formation de 5 mois à l'UFCV de Clermont-Ferrand durant laquelle j'ai acquis…", rows: 3, max: 350 },
+      { key: "experiences",    label: "Expériences professionnelles & activités", placeholder: "Ex : J'ai travaillé comme logisticien dans différentes entreprises, notamment…", rows: 3, max: 350 },
+    ],
+    tip: "<strong>Conseil :</strong> Pour faciliter l'exercice, vous devez connaître quasiment par cœur votre CV. Appuyez-vous sur vos réponses aux modules précédents pour enrichir votre discours !",
+    example: { label: "Extrait de l'exemple du dossier", text: "« Bonjour, je suis Marcus DUFOUR. J'ai 21 ans et j'ai pour projet de devenir combattant de la logistique. Je possède les CACES 1,3,5 et j'ai déjà travaillé dans différentes entreprises au poste de logisticien. J'ai effectué une formation de préparation aux carrières militaires à l'UFCV… »" }
+  }
+];
+
+// Checklist intro
+const CHECKLIST_ITEMS = [
+  "J'ai relu mon CV et je le connais par cœur",
+  "J'ai consulté la fiche métier du poste que je vise",
+  "Je sais quelle formation militaire j'ai effectuée (UFCV, PMT…)",
+  "J'ai préparé des exemples concrets pour chaque compétence"
+];
+
+let state = {
+  step: 0,
+  answers: {},
+  checks: [false, false, false, false],
+  feedback: "",
+  feedbackLoading: false
+};
+
+function setState(patch) {
+  Object.assign(state, patch);
+  render();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function esc(s) {
+  return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");
+}
+
+function allFilled(stepId) {
+  const s = STEPS[stepId - 1];
+  return s.fields.every(f => (state.answers[f.key] || "").trim().length > 5);
+}
+
+function fullText() {
+  let parts = [];
+  STEPS.forEach(s => {
+    s.fields.forEach(f => {
+      if (state.answers[f.key]) parts.push(state.answers[f.key]);
+    });
+  });
+  return parts.join(" ");
+}
+
+// ── Render helpers ────────────────────────────────────────────────────────────
+
+function progressBar(step, total) {
+  const pct = Math.round((step / total) * 100);
+  return `
+    <div class="progress-meta"><span>MODULE ${step}/${total}</span><span>${pct}% COMPLÉTÉ</span></div>
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>`;
+}
+
+function dots(total, current) {
+  return `<div class="dots">${Array.from({length:total}, (_,i) => {
+    const cls = i+1 < current ? "dot past" : i+1 === current ? "dot active" : "dot";
+    return `<div class="${cls}"></div>`;
+  }).join("")}</div>`;
+}
+
+function renderFields(stepObj) {
+  return stepObj.fields.map((f, fi) => {
+    const val = state.answers[f.key] || "";
+    const filled = val.trim().length > 5;
+    return `
+      <div style="margin-bottom:20px">
+        <div style="font-size:11px;color:var(--accent);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${f.label}</div>
+        <textarea rows="${f.rows}" maxlength="${f.max}"
+          class="${filled ? "filled" : ""}"
+          placeholder="${f.placeholder}"
+          data-key="${f.key}"
+          oninput="onFieldInput(this)"
+        >${esc(val)}</textarea>
+        <div style="text-align:right;font-size:11px;color:var(--dim);font-family:'DM Mono',monospace">${val.length}/${f.max}</div>
+      </div>`;
+  }).join("");
+}
+
+function aiFeedbackHtml() {
+  const feedbackBlock = state.feedback
+    ? `<div class="ai-feedback"><div class="ai-label">🎖️ Retour du Coach IA</div><p class="ai-text">${esc(state.feedback)}</p></div>`
+    : "";
+  const loading = state.feedbackLoading;
+  return `
+    <button class="btn-ai" id="btn-ai" ${loading ? "disabled" : ""} onclick="generateFeedback()">
+      ${loading ? '<span class="spinner">⟳</span> Analyse en cours…' : '✨ OBTENIR UN FEEDBACK IA'}
+    </button>
+    ${feedbackBlock}`;
+}
+
+// ── Screens ───────────────────────────────────────────────────────────────────
+
+function renderIntro() {
+  const checkItems = CHECKLIST_ITEMS.map((item, i) => `
+    <div class="check-item" onclick="toggleCheck(${i})">
+      <div class="check-box ${state.checks[i] ? 'checked' : ''}" id="cb-${i}"></div>
+      <span>${item}</span>
+    </div>`).join("");
+
+  const modules = STEPS.map(s => `
+    <div class="module-item">
+      <div class="module-num">${s.num}</div>
+      <div><div class="module-title">${s.emoji} ${s.title}</div><div class="module-sub">${s.subtitle}</div></div>
+    </div>`).join("");
+
+  return `
+    <div class="card">
+      <div class="badge">⚔️ Parcooroo — UFCV</div>
+      <h1>DOSSIER DE PRÉPA<br>À L'ENTRETIEN</h1>
+      <div class="intro-divider"></div>
+      <p class="intro-desc">
+        Ce module vous accompagne étape par étape pour préparer les questions clés de votre entretien de recrutement dans l'<em>Armée de Terre</em>.<br><br>
+        Suivez les 4 modules, rédigez vos réponses, et obtenez un feedback personnalisé.
+      </p>
+
+      <h3 style="margin-bottom:12px">Avant de commencer, vérifiez :</h3>
+      <div class="checklist" style="border:1px solid var(--border);border-radius:2px;margin-bottom:32px;overflow:hidden">
+        ${checkItems}
+      </div>
+
+      <h3 style="margin-bottom:12px">Les 4 modules</h3>
+      <div class="module-list">${modules}</div>
+
+      <button class="btn-primary" onclick="goStep(1)">COMMENCER LA PRÉPARATION →</button>
+    </div>`;
+}
+
+function renderStep(stepIndex) {
+  const s = STEPS[stepIndex - 1];
+  const isLast = stepIndex === STEPS.length;
+  const can = allFilled(stepIndex);
+
+  const exampleHtml = s.example ? `
+    <div class="example">
+      <div class="example-label">${s.example.label}</div>
+      <div class="example-text">${esc(s.example.text)}</div>
+    </div>` : "";
+
+  return `
+    <div class="card">
+      ${progressBar(stepIndex, STEPS.length)}
+      ${dots(STEPS.length, stepIndex)}
+
+      <div class="step-meta">Module ${s.num}</div>
+      <h2 class="step-title">${s.emoji} ${s.title}</h2>
+      <p class="step-subtitle">${s.subtitle}</p>
+
+      <p class="step-instruction">${s.instruction}</p>
+
+      ${exampleHtml}
+
+      ${renderFields(s)}
+
+      <div class="tip">${s.tip}</div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goBack()">← Retour</button>
+        <button class="btn btn-next" ${can ? "" : "disabled"} onclick="goNext(${stepIndex}, ${isLast})">
+          ${isLast ? "VOIR MON DOSSIER COMPLET 🎖️" : "MODULE SUIVANT →"}
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderResult() {
+  const sections = STEPS.map(s => {
+    const blocks = s.fields.map(f => {
+      const v = state.answers[f.key];
+      return v ? `<div style="margin-bottom:14px"><div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:4px">${f.label}</div><p class="preview-text">${esc(v)}</p></div>` : "";
+    }).join("");
+    if (!blocks.trim()) return "";
+    return `<div class="preview-section"><div class="preview-section-title">${s.emoji} ${s.title}</div>${blocks}</div>`;
+  }).join("");
+
+  // Build full speech for the last section (Présentez-vous, now module 4)
+  const speech = STEPS[STEPS.length - 1].fields.map(f => state.answers[f.key] || "").filter(Boolean).join(" ");
+
+  return `
+    <div style="animation:fadeIn 0.4s ease">
+      <div class="card" style="margin-bottom:20px">
+        <div class="result-header">
+          <div class="result-emoji">🎖️</div>
+          <div>
+            <h2 class="result-title">DOSSIER COMPLET</h2>
+            <div class="result-sub">Toutes vos réponses sont prêtes pour l'entretien</div>
+          </div>
+        </div>
+
+        ${sections}
+
+        ${speech ? `
+        <div class="full-text-box">
+          <div class="full-text-label">📋 Votre présentation à dire à voix haute</div>
+          <p class="full-text-content">${esc(speech)}</p>
+        </div>` : ""}
+
+        ${aiFeedbackHtml()}
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="goStep(${STEPS.length})">← Retour</button>
+        <button class="btn-secondary" onclick="restart()">🔄 Recommencer</button>
+      </div>
+    </div>`;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  if (state.step === 0) app.innerHTML = renderIntro();
+  else if (state.step > STEPS.length) app.innerHTML = renderResult();
+  else app.innerHTML = renderStep(state.step);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+
+function goStep(n) { setState({ step: n, feedback: "", feedbackLoading: false }); }
+function goBack()  { state.step > 1 ? goStep(state.step - 1) : goStep(0); }
+function restart() { setState({ step: 0, answers: {}, checks: [false,false,false,false], feedback: "", feedbackLoading: false }); }
+function goNext(idx, isLast) { setState({ step: isLast ? STEPS.length + 1 : idx + 1 }); }
+
+function toggleCheck(i) {
+  const c = [...state.checks];
+  c[i] = !c[i];
+  setState({ checks: c });
+}
+
+function onFieldInput(ta) {
+  const key = ta.dataset.key;
+  state.answers = { ...state.answers, [key]: ta.value };
+  // update char count
+  const sib = ta.nextElementSibling;
+  const step = STEPS[state.step - 1];
+  const field = step?.fields.find(f => f.key === key);
+  if (sib && field) sib.textContent = `${ta.value.length}/${field.max}`;
+  ta.classList.toggle("filled", ta.value.trim().length > 5);
+  // update next button
+  const btn = document.querySelector(".btn-next");
+  if (btn) btn.disabled = !allFilled(state.step);
+}
+
+async function generateFeedback() {
+  setState({ feedbackLoading: true, feedback: "" });
+
+  // Build structured summary for the AI
+  let summary = "";
+  STEPS.forEach(s => {
+    summary += `\n## ${s.title}\n`;
+    s.fields.forEach(f => {
+      if (state.answers[f.key]) summary += `**${f.label}** : ${state.answers[f.key]}\n`;
+    });
+  });
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `Tu es un conseiller en insertion professionnelle spécialisé dans les recrutements militaires (Armée de Terre française).
+Tu analyses les réponses d'un candidat qui prépare son entretien de recrutement militaire et tu donnes un feedback structuré, bienveillant et très concret.
+Tu vouvoies le candidat. Tu évalues : la clarté et la cohérence de la présentation, la connaissance du métier, la qualité des qualités/défauts présentés, et la force des motivations.
+Tu signales les points forts et les axes d'amélioration prioritaires.
+Termine par 2 conseils pratiques à appliquer avant l'entretien.
+Réponds en 200-250 mots maximum.`,
+        messages: [{
+          role: "user",
+          content: `Voici mes réponses préparées pour mon entretien de recrutement dans l'Armée de Terre :\n${summary}\n\nDonne-moi un feedback constructif.`
+        }]
+      })
+    });
+    const data = await res.json();
+    const msg = (data.content || []).map(c => c.text || "").join("") || "Impossible d'obtenir un retour pour le moment.";
+    setState({ feedbackLoading: false, feedback: msg });
+  } catch {
+    setState({ feedbackLoading: false, feedback: "Une erreur est survenue. Vérifiez votre connexion et réessayez." });
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
